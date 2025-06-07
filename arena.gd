@@ -3,15 +3,16 @@ class_name ArenaScript extends Node3D
 @onready var mesh_instance = $ArenaMesh
 @onready var collision_shape = $ArenaMesh/StaticBody3D/CollisionShape3D
 
-@export var radius: float = 20.0
+@export var radius: float = 50.0
 @export var segments: int = 64
 @export var depth: float = -4.0  # Depth of the center curve
 
 
 func _ready():
 	var st = SurfaceTool.new()
+	
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-
+	
 	for i in range(segments):
 		var angle1 = TAU * i / segments
 		var angle2 = TAU * (i + 1) / segments
@@ -29,6 +30,40 @@ func _ready():
 		st.add_vertex(center)
 		st.add_vertex(Vector3(x1, y1, z1))
 		st.add_vertex(Vector3(x2, y2, z2))
+
+	# Wall height (how tall the walls will be)
+	var wall_height := 3.0
+
+	# Begin appending more geometry to the same SurfaceTool
+	for i in range(segments):
+		var angle1 = TAU * i / segments
+		var angle2 = TAU * (i + 1) / segments
+
+		var x1 = radius * cos(angle1)
+		var z1 = radius * sin(angle1)
+		var y1 = -depth * ((x1 * x1 + z1 * z1) / (radius * radius))
+
+		var x2 = radius * cos(angle2)
+		var z2 = radius * sin(angle2)
+		var y2 = -depth * ((x2 * x2 + z2 * z2) / (radius * radius))
+
+		var bottom1 = Vector3(x1, y1, z1)
+		var bottom2 = Vector3(x2, y2, z2)
+
+		var top1 = bottom1 + Vector3.UP * wall_height
+		var top2 = bottom2 + Vector3.UP * wall_height
+
+		# First triangle of wall quad
+		st.add_vertex(bottom1)
+		st.add_vertex(top1)
+		st.add_vertex(top2)
+
+		# Second triangle of wall quad
+		st.add_vertex(bottom1)
+		st.add_vertex(top2)
+		st.add_vertex(bottom2)
+
+	st.generate_normals()  # ✨ Auto-computes normals for smooth lighting
 
 	var mesh = st.commit()
 	mesh_instance.mesh = mesh

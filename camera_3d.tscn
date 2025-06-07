@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://dblbj5ujdcaf3"]
+
+[ext_resource type="Script" uid="uid://bqnl3ufuo2dbj" path="res://focus.gd" id="1_86a6h"]
+
+[node name="Camera3D" type="Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 0.907623, 0.419785, 0, -0.419785, 0.907623, 0, 0, 0)
+script = ExtResource("1_86a6h")

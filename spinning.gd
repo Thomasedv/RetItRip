@@ -1,7 +1,7 @@
 class_name Spinner_spinning extends Node3D
 
 @export var max_speed = 50;
-@export var spin_speed: float = 10 # Radians per second (Y-axis spin)
+@export var spin_speed: float = 25 # Radians per second (Y-axis spin)
 @export var wobble_strength: float =  - (spin_speed - (max_speed+1)) / (max_speed+1) *  0.1 # Radians of max tilt
 @export var wobble_speed: float = 0.2 # How fast it wobbles (Hz)
 @onready var static_body_3d: StaticBody3D = $"../../ArenaMesh/StaticBody3D"
@@ -32,7 +32,7 @@ func _process(delta):
 	
 	var from = spinner_tip.global_transform.origin 
 	var down_dir = -spinner_tip.global_transform.basis.y
-	var to = from + down_dir * 2.0
+	var to = from + down_dir * 0.22
 
 	var space_state = get_world_3d().direct_space_state
 	
@@ -50,9 +50,12 @@ func _process(delta):
 			var hit_pos = result.position
 			var hit_normal = result.normal
 
-			if last_mark_pos == null or last_mark_pos.distance_to(hit_pos) > 0:
+			if last_mark_pos != Vector3.ZERO or last_mark_pos.distance_to(hit_pos) > 0:
 				spawn_path_mark(hit_pos, hit_normal, last_mark_pos)
 				last_mark_pos = hit_pos
+	else:
+		last_mark_pos = Vector3.ZERO
+		
 
 
 
@@ -86,7 +89,7 @@ func create_path_texture(size: int = 64, delta: float = 0.1) -> ImageTexture:
 	var line_width = 40
 	var center_x = int(size / 2 + current_line_offset)
 
-	for x in range(center_x - line_width / 2, center_x + line_width / 2):
+	for x in range(center_x - line_width / 2.0, center_x + line_width / 2.0):
 		for y in range(size):
 			img.set_pixel(x, y, Color(0, 0, 0, 1))
 			
@@ -102,7 +105,9 @@ func spawn_path_mark(pos: Vector3, normal: Vector3, last_pos: Vector3):
 	sprite.texture = texture
 	
 	sprite.billboard = BaseMaterial3D.BILLBOARD_DISABLED
-
+	if last_pos == Vector3.ZERO:
+		last_pos = pos
+		
 	# Calculate vector from last_pos to pos
 	var line_vec = pos - last_pos
 	var mid_pos = last_pos + line_vec * 0.5
@@ -126,7 +131,7 @@ func spawn_path_mark(pos: Vector3, normal: Vector3, last_pos: Vector3):
 
 	
 	arena_mesh.add_child(sprite)
-	sprite.global_transform.origin = mid_pos + normal * 0.01 
+	sprite.global_transform.origin = mid_pos + normal * 0.001 
 	sprite.scale = Vector3(length*3, 0.1, 0.1)
 	
 	await get_tree().create_timer(50.0).timeout
