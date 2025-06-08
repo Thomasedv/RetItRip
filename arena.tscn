@@ -36,6 +36,7 @@ shadow_bias = 0.05
 [node name="Spinner" parent="." instance=ExtResource("2_444vf")]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.465, 0)
+floor_stop_on_slope = true
 player_controlled = true
 
 [node name="Camera3D2" parent="Spinner" instance=ExtResource("3_27ga2")]
