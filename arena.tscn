@@ -1,8 +1,15 @@
-[gd_scene load_steps=7 format=3 uid="uid://j6rpge48i7c6"]
+[gd_scene load_steps=11 format=3 uid="uid://j6rpge48i7c6"]
 
 [ext_resource type="Script" uid="uid://ddvj2ejschxq2" path="res://arena.gd" id="1_444vf"]
 [ext_resource type="PackedScene" uid="uid://v243rrbv2yn1" path="res://spinner.tscn" id="2_444vf"]
 [ext_resource type="PackedScene" uid="uid://dblbj5ujdcaf3" path="res://camera_3d.tscn" id="3_27ga2"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_27ga2"]
+albedo_color = Color(0.341906, 0.405243, 0.102593, 1)
+metallic = 1.0
+metallic_specular = 1.0
+rim_enabled = true
+clearcoat_enabled = true
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_444vf"]
 
@@ -10,12 +17,22 @@
 
 [sub_resource type="HeightMapShape3D" id="HeightMapShape3D_ubfh8"]
 
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_27ga2"]
+
+[sub_resource type="Sky" id="Sky_h0wof"]
+sky_material = SubResource("PanoramaSkyMaterial_27ga2")
+
+[sub_resource type="Environment" id="Environment_fu4bq"]
+background_mode = 1
+background_color = Color(0.372455, 0.567747, 1, 1)
+sky = SubResource("Sky_h0wof")
+
 [node name="Arena" type="Node3D"]
 script = ExtResource("1_444vf")
 
 [node name="ArenaMesh" type="MeshInstance3D" parent="."]
 layers = 2
-gi_mode = 2
+material_override = SubResource("StandardMaterial3D_27ga2")
 mesh = SubResource("ArrayMesh_444vf")
 skin = SubResource("Skin_27ga2")
 
@@ -35,12 +52,43 @@ shadow_bias = 0.05
 
 [node name="Spinner" parent="." instance=ExtResource("2_444vf")]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.465, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.59659, 0)
 floor_stop_on_slope = true
 player_controlled = true
 
+[node name="Body" parent="Spinner" index="2" node_paths=PackedStringArray("arena")]
+arena = NodePath("../..")
+
 [node name="Camera3D2" parent="Spinner" instance=ExtResource("3_27ga2")]
 transform = Transform3D(1, 0, 0, 0, 0.907623, 0.419785, 0, -0.419785, 0.907623, 0, 2.67497, 4.35223)
+environment = SubResource("Environment_fu4bq")
 
 [node name="Spinner2" parent="." instance=ExtResource("2_444vf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.39698, 2.83005, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.39698, 5.17811, -23.384)
+
+[node name="Body" parent="Spinner2" index="2" node_paths=PackedStringArray("arena")]
+arena = NodePath("../..")
+
+[node name="Spinner3" parent="." instance=ExtResource("2_444vf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.9062, 5.6601, 14.1701)
+
+[node name="Body" parent="Spinner3" index="2" node_paths=PackedStringArray("arena")]
+arena = NodePath("../..")
+
+[node name="Spinner4" parent="." instance=ExtResource("2_444vf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.2708, 6.91263, -20.3605)
+
+[node name="Body" parent="Spinner4" index="2" node_paths=PackedStringArray("arena")]
+arena = NodePath("../..")
+
+[node name="Spinner5" parent="." instance=ExtResource("2_444vf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.31122, 6.36638, 25.071)
+
+[node name="Body" parent="Spinner5" index="2" node_paths=PackedStringArray("arena")]
+arena = NodePath("../..")
+
+[editable path="Spinner"]
+[editable path="Spinner2"]
+[editable path="Spinner3"]
+[editable path="Spinner4"]
+[editable path="Spinner5"]

@@ -6,28 +6,49 @@ class_name Spinner_spinning extends Node3D
 @export var wobble_speed: float = 0.2 # How fast it wobbles (Hz)
 @onready var static_body_3d: StaticBody3D = $"../../ArenaMesh/StaticBody3D"
 
+
 var time := 0.0
 @export var speed = 14
 # The downward acceleration when in the air, in meters per second squared.
 @export var fall_acceleration = 75
+@export var arena: ArenaScript = null
 
+var is_tipping = false
+var tip_axis := Vector3(1, 0, 0)  # or Vector3(0, 0, 1) if you want sideways tip
+var tip_speed := 1.5  # radians per second
+var current_tip_angle := 0.0
+var max_tip_angle := PI  # 180 degrees in radians
+var is_scaling_down := false
+var scale_timer := 0.0
+var scale_duration := 3.0  # seconds to fully shrink and despawn
 var target_velocity = Vector3.ZERO
 
+func update_wobble():
+	wobble_strength = - (spin_speed - (max_speed+1)) / (max_speed+1) *  0.1 
+
+func tip():
+	spin_speed = 0
+	is_tipping = true
+	current_tip_angle = 0.0
 
 func _process(delta):
 	time += delta
 
 	# Base spin
-	rotate_y(spin_speed * delta)
+	if not is_tipping:
+		rotate_y(spin_speed * delta)
 
-	# Wobble (small oscillation in X and Z)
-	var x_angle = sin(time * wobble_speed) * wobble_strength
-	var z_angle = cos(time * wobble_speed) * wobble_strength
-
-	# Apply wobble by modifying rotation (excluding Y spin so it doesn't reset)
-	rotation.x = x_angle
-	rotation.z = z_angle
+	# Wobble (skip if tipping)
+	if not is_tipping:
+		var x_angle = sin(time * wobble_speed) * wobble_strength
+		var z_angle = cos(time * wobble_speed) * wobble_strength
+		rotation.x = x_angle
+		rotation.z = z_angle
+	else:
+		spinner.start_shrink_and_despawn()
+		scale_timer = 0.0
 	
+		rotate_object_local(tip_axis, current_tip_angle)
 	
 	
 	var from = spinner_tip.global_transform.origin 
@@ -58,6 +79,7 @@ func _process(delta):
 		
 
 
+@onready var spinner: CharacterBody3D = $".."
 
 @onready var spinner_tip = $Tip  # Assuming you have a node marking the spinner tip position
 @onready var arena_mesh: MeshInstance3D = $"../../ArenaMesh"
@@ -134,5 +156,5 @@ func spawn_path_mark(pos: Vector3, normal: Vector3, last_pos: Vector3):
 	sprite.global_transform.origin = mid_pos + normal * 0.001 
 	sprite.scale = Vector3(length*3, 0.1, 0.1)
 	
-	await get_tree().create_timer(50.0).timeout
+	await get_tree().create_timer(20.0).timeout
 	sprite.queue_free()

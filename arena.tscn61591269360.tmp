@@ -1,0 +1,49 @@
+[gd_scene load_steps=7 format=3 uid="uid://j6rpge48i7c6"]
+
+[ext_resource type="Script" uid="uid://ddvj2ejschxq2" path="res://arena.gd" id="1_444vf"]
+[ext_resource type="PackedScene" uid="uid://v243rrbv2yn1" path="res://spinner.tscn" id="2_444vf"]
+[ext_resource type="PackedScene" uid="uid://dblbj5ujdcaf3" path="res://camera_3d.tscn" id="3_27ga2"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_444vf"]
+
+[sub_resource type="Skin" id="Skin_27ga2"]
+
+[sub_resource type="HeightMapShape3D" id="HeightMapShape3D_ubfh8"]
+
+[node name="Arena" type="Node3D"]
+script = ExtResource("1_444vf")
+
+[node name="ArenaMesh" type="MeshInstance3D" parent="."]
+layers = 2
+gi_mode = 2
+mesh = SubResource("ArrayMesh_444vf")
+skin = SubResource("Skin_27ga2")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="ArenaMesh"]
+collision_layer = 3
+collision_mask = 3
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ArenaMesh/StaticBody3D"]
+shape = SubResource("HeightMapShape3D_ubfh8")
+debug_color = Color(0.791477, 0.190865, 0.92886, 0.42)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.533393, 0.845868, 0, -0.845868, 0.533393, 0.222916, 15.8303, 5.42987)
+light_energy = 0.838
+shadow_enabled = true
+shadow_bias = 0.05
+
+[node name="Spinner" parent="." instance=ExtResource("2_444vf")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.465, 0)
+floor_stop_on_slope = true
+player_controlled = true
+
+[node name="Camera3D2" parent="Spinner" instance=ExtResource("3_27ga2")]
+transform = Transform3D(1, 0, 0, 0, 0.907623, 0.419785, 0, -0.419785, 0.907623, 0, 2.67497, 4.35223)
+
+[node name="Spinner2" parent="." instance=ExtResource("2_444vf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.39698, 5.17811, 0)
+
+[node name="Spinner3" parent="." instance=ExtResource("2_444vf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.25847, 5.6601, 2.39941)
